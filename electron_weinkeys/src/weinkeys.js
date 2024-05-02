@@ -18,7 +18,7 @@ const api_url = 'https://baconipsum.com/api/?type=meat-and-filler'
 
 //audio
 const key_sound = q('#myAudio')
-let muted = false
+let muted
 
 let actual_position = 0
 let text = ''
@@ -28,7 +28,22 @@ let timer_started = false
 let errors = 0
 
 console.log('api_url', api_url)
+
+const setMutedState = () => {
+  let storage = localStorage.getItem('muted')
+  if (storage == 'true') {
+    muted = true
+    mute_line_1.classList.remove('mute_line')
+    mute_line_2.classList.remove('mute_line')
+  } else {
+    muted = false
+    mute_line_1.classList.add('mute_line')
+    mute_line_2.classList.add('mute_line')
+  }
+}
+
 ;(async () => {
+  setMutedState()
   const response = await fetch(api_url)
   const data = await response.json()
   console.log('data', data[0].split(''))
@@ -78,7 +93,7 @@ const ignoreKeys = ['Shift', 'Alt', 'Control', 'Meta', 'AltGraph']
 
 window.addEventListener('keydown', (e) => {
   console.log('e.key', e.key)
-  
+
   if (ignoreKeys.includes(e.key)) return
   if (e.key === 'Backspace') {
     console.log('Entra backspace')
@@ -111,11 +126,11 @@ window.addEventListener('keydown', (e) => {
     timerStart()
     timer_started = true
   }
-  key_sound.stop()
 })
 
 window.addEventListener('keyup', (e) => {
-  key_sound.stop()
+  key_sound.pause()
+  key_sound.currentTime = 0
 })
 
 audio_control.addEventListener('click', (e) => {
@@ -123,9 +138,13 @@ audio_control.addEventListener('click', (e) => {
     muted = false
     mute_line_1.classList.add('mute_line')
     mute_line_2.classList.add('mute_line')
+    localStorage.setItem('muted', false)
+    input.focus()
   } else {
     muted = true
     mute_line_1.classList.remove('mute_line')
     mute_line_2.classList.remove('mute_line')
+    localStorage.setItem('muted', true)
+    input.focus()
   }
 })
