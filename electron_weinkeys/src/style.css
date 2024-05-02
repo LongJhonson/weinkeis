@@ -163,3 +163,11 @@ a:hover {
 .line-spacing {
   line-height: 2;
 }
+
+.audio line{
+  stroke: white !important;
+}
+
+.mute_line{
+  display: none;
+}
